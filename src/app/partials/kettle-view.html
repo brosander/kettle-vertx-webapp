@@ -1,0 +1,34 @@
+<div id="toolbar">
+  <div ng-repeat="menu in menus" class="menuCategory">
+    <ng-include src="'partials/menu-item.html'"/>
+  </div>
+</div>
+<div id="transDesign">
+  <div id="stepEntries">
+    <ng-include src="'partials/step-entries.html'" />
+  </div>
+  <div id="designView" ng-show="activeEditor">
+    <div id="tabBar">
+      <div ng-repeat="editor in editors" ng-class="{selectedEditorTab: editor == activeEditor, editorTab: editor != activeEditor}" ng-click="setActiveEditor(editor)">
+        {{editor.name}}
+      </div>
+    </div>
+    <div id="designToolBar">
+      <ng-include src="'partials/design-toolbar.html'"/>
+    </div>
+    <div id="palette">
+      <svg kthin-droppable dropHelper="onEntryTypeDrop">
+        <line ng-repeat="hop in activeEditor.hops | filter : {_defined: true}" ng-attr-x1="{{getMiddleX(hop.from)}}" ng-attr-y1="{{getMiddleY(hop.from)}}" ng-attr-x2="{{getMiddleX(hop.to)}}" ng-attr-y2="{{getMiddleY(hop.to)}}" class="hop" />
+        <!--  <polygon ng-repeat-end ng-attr-points="{{}} />-->
+        <image ng-repeat-start="entry in activeEditor.entries | filter: {_defined: true}" ng-xlink-href="{{entry.definition.image}}" ng-attr-x="{{entry.location.x}}" ng-attr-y="{{entry.location.y}}" ng-attr-height="{{entry.height}}px" ng-attr-width="{{entry.width}}px" xlink:href="" />
+        <rect ng-attr-x="{{entry.location.x - 1}}" ng-attr-y="{{entry.location.y - 1}}" ng-attr-width="{{entry.width + 2}}px" ng-attr-height="{{entry.height + 2}}px" ng-mousedown="entryOnMouseDown($event, entry);" ng-dblclick="entryOnDoubleClick($event, entry)" class="border">
+          <title>{{entry.name}}</title>
+        </rect>
+        <text ng-repeat-end ng-attr-x="{{getMiddleX(entry)}}" ng-attr-y="{{entry.location.y + entry.height + 18}}" text-anchor="middle" class="unselectable">{{entry.name}}</text>
+      </svg>
+    </div>
+  </div>
+</div>
+<div ng-repeat="(kthinId, stepEntry) in editingEntries | filter:{editing: true}" ng-init="entry = stepEntry.stepCopy">
+  <ng-include src="'partials/step-edit.html'" />
+</div>
